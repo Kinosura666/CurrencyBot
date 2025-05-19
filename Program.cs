@@ -3,6 +3,7 @@ using CurrencyExchanger.Services;
 using CurrencyExchanger.Utils;
 using CurrencyExchanger.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,5 +56,5 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
-
+Console.WriteLine("🔧 DbConnectionString: " + Constants.DbConnectionString);
 await app.RunAsync();
