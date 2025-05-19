@@ -43,8 +43,6 @@ app.MapGet("/", context =>
 
 app.MapControllers();
 
-Console.WriteLine("🔧 DB_CONNECTION_STRING: " + Constants.DbConnectionString);
-
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
