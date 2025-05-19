@@ -3,7 +3,6 @@ using CurrencyExchanger.Services;
 using CurrencyExchanger.Utils;
 using CurrencyExchanger.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,13 +17,12 @@ builder.Services.AddHttpClient();
 builder.Services.AddHostedService<DailyRateNotifier>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(Environment.GetEnvironmentVariable("DbConnectionString")));
-
-
+    options.UseNpgsql(Constants.DbConnectionString));
 
 builder.Services.AddLogging(logging => logging.AddConsole());
 
 var app = builder.Build();
+
 app.Use((context, next) =>
 {
     context.Request.Scheme = "https";
@@ -45,16 +43,18 @@ app.MapGet("/", context =>
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var botService = scope.ServiceProvider.GetRequiredService<TelegramBotService>();
-    botService.Start();
-}
+Console.WriteLine("🔧 DB_CONNECTION_STRING: " + Constants.DbConnectionString);
 
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
 }
-Console.WriteLine("🔧 DbConnectionString: " + Constants.DbConnectionString);
+
+using (var scope = app.Services.CreateScope())
+{
+    var botService = scope.ServiceProvider.GetRequiredService<TelegramBotService>();
+    botService.Start();
+}
+
 await app.RunAsync();
