@@ -29,11 +29,10 @@ app.Use((context, next) =>
     return next();
 });
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
 
 app.MapGet("/", context =>
 {
